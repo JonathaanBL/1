@@ -1,0 +1,161 @@
+{
+  "version": 1,
+  "project": {
+    "name": "liliiixi-link-in-bio",
+    "productType": null,
+    "stack": [
+      "react",
+      "tailwind-v4",
+      "vite"
+    ]
+  },
+  "sources": {
+    "tokens": [
+      "src/index.css"
+    ],
+    "components": [
+      "src/components/ui"
+    ],
+    "assets": [],
+    "instructions": []
+  },
+  "design": {
+    "colorMode": "light",
+    "colors": {
+      "--color-background": {
+        "value": "#0b0a12",
+        "source": "src/index.css"
+      },
+      "--color-foreground": {
+        "value": "#f6f3fb",
+        "source": "src/index.css"
+      },
+      "--color-card": {
+        "value": "#15121f",
+        "source": "src/index.css"
+      },
+      "--color-card-foreground": {
+        "value": "#f6f3fb",
+        "source": "src/index.css"
+      },
+      "--color-primary": {
+        "value": "#e11d48",
+        "source": "src/index.css"
+      },
+      "--color-primary-foreground": {
+        "value": "#ffffff",
+        "source": "src/index.css"
+      },
+      "--color-accent": {
+        "value": "#ff7a93",
+        "source": "src/index.css"
+      },
+      "--color-secondary": {
+        "value": "#2a2438",
+        "source": "src/index.css"
+      },
+      "--color-secondary-foreground": {
+        "value": "#f6f3fb",
+        "source": "src/index.css"
+      },
+      "--color-muted-foreground": {
+        "value": "#c4bcd4",
+        "source": "src/index.css"
+      },
+      "--color-border": {
+        "value": "rgb(255 255 255 / 0.14)",
+        "source": "src/index.css"
+      },
+      "--color-popover": {
+        "value": "#1c1828",
+        "source": "src/index.css"
+      },
+      "--color-popover-foreground": {
+        "value": "#f6f3fb",
+        "source": "src/index.css"
+      },
+      "--color-tiktok-cyan": {
+        "value": "#25f4ee",
+        "source": "src/index.css"
+      },
+      "--color-sunset": {
+        "value": "#ff8a3d",
+        "source": "src/index.css"
+      }
+    },
+    "typography": {
+      "--font-sans": {
+        "value": "\"Plus Jakarta Sans Variable\", ui-sans-serif, system-ui, sans-serif",
+        "source": "src/index.css"
+      }
+    },
+    "spacing": {},
+    "radius": {},
+    "shadows": {},
+    "motion": {},
+    "density": "unknown"
+  },
+  "components": {
+    "installed": [
+      "animated-gradient-background",
+      "profile-card"
+    ],
+    "preferredPrimitives": [],
+    "patterns": []
+  },
+  "constraints": {
+    "must": [
+      "Dark-only page: color-scheme is dark and every color comes from the tokens in src/index.css (the detected colorMode \"light\" is a heuristic miss).",
+      "Mobile-first: no horizontal scroll down to 320px wide.",
+      "Respect prefers-reduced-motion: no gradient breathing or entrance animation.",
+      "Visible focus outline on every link and button.",
+      "White text on primary (#e11d48) keeps at least 4.5:1 contrast; do not swap in TikTok's brighter #fe2c55 for button backgrounds."
+    ],
+    "avoid": [
+      "Hover scaling on buttons (use active scale only).",
+      "transition-all.",
+      "Hotlinked avatar URLs from TikTok's CDN; they expire. Keep the image in public/avatar.jpg."
+    ]
+  },
+  "decisions": [
+    {
+      "id": "link-in-bio-layout",
+      "decision": "Single centered glass profile card (adapted from 21st Profile Card by ravikatiyar162) over a full-screen animated radial gradient (adapted from 21st Animated Gradient Background by hammamikhairi).",
+      "createdAt": "2026-10-29",
+      "source": "src/App.tsx"
+    },
+    {
+      "id": "sunset-palette",
+      "decision": "Night-to-sunset gradient (purple, pink, orange, gold) drawn from the avatar, with TikTok pink and cyan as accents.",
+      "createdAt": "2026-10-29",
+      "source": "src/App.tsx"
+    }
+  ],
+  "evidence": [
+    {
+      "fact": "components.installed",
+      "source": "src/components/ui"
+    },
+    {
+      "fact": "design.colorMode:light",
+      "source": "src/index.css"
+    },
+    {
+      "fact": "design.tokens",
+      "source": "src/index.css"
+    },
+    {
+      "fact": "project.stack:react",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:tailwind-v4",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:vite",
+      "source": "package.json"
+    }
+  ],
+  "generatedAt": "2026-10-29T13:10:26.564Z"
+}
