@@ -11,6 +11,10 @@ Hecha con React, Vite y Tailwind CSS. La tarjeta de perfil y el fondo animado es
 - Botones de redes: la lista `socialLinks` en `src/App.tsx`
 - Colores del fondo: `GRADIENT_COLORS` en `src/App.tsx`
 
+## Publicación
+
+La página está en https://jonathaanbl.github.io/1/. Cada vez que se sube un cambio de la carpeta `tiktok/` a la rama `claude/link-in-bio`, GitHub Actions la compila y la publica sola en la rama `gh-pages` (ver `.github/workflows/deploy-tiktok.yml`). Tarda uno o dos minutos.
+
 ## Comandos
 
 ```bash

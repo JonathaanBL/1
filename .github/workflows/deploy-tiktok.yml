@@ -1,0 +1,45 @@
+# Builds the TikTok link-in-bio page in tiktok/ and publishes it to the gh-pages
+# branch, which GitHub Pages serves at https://jonathaanbl.github.io/1/.
+name: Deploy TikTok page
+
+on:
+  push:
+    branches: [claude/link-in-bio]
+    paths:
+      - "tiktok/**"
+      - ".github/workflows/deploy-tiktok.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-tiktok
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tiktok
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tiktok/package-lock.json
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+      - name: Publish to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./tiktok/dist
+          publish_branch: gh-pages
+          commit_message: Publish the TikTok page
