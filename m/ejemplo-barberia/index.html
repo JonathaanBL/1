@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Northern Blvd Fades · Queens, NY</title>
+<meta name="description" content="Walk-ins welcome, appointments first. Fades, beard work and hot towel shaves in Jackson Heights. Fictional example to show the template.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;600&display=swap">
+<style>
+:root {
+  --fondo: #0f0f10; --superficie: #1a1a1c; --tinta: #f4f1ea; --suave: #b9b4a8;
+  --acento: #c9a46a; --sobre-acento: #16120b;
+  --titulo: "Bebas Neue", Impact, sans-serif; --texto: "Manrope", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--fondo); color: var(--tinta); font: 16px/1.6 var(--texto); padding-bottom: 72px; }
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+.envoltura { width: min(1080px, 100% - 32px); margin-inline: auto; }
+.aviso { background: var(--acento); color: var(--sobre-acento); font-size: 13px; text-align: center; padding: 6px 16px; }
+header { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--fondo) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid color-mix(in srgb, var(--tinta) 10%, transparent); }
+header .envoltura { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 60px; }
+.marca { font-family: var(--titulo); font-size: 22px; text-decoration: none; text-transform: uppercase; letter-spacing: .04em; }
+nav { display: flex; gap: 20px; font-size: 14px; }
+nav a { text-decoration: none; color: var(--suave); }
+nav a:hover { color: var(--tinta); }
+@media (max-width: 640px) { nav { display: none; } }
+.hero { background: repeating-linear-gradient(135deg, #1a1a1c 0 18px, #141416 18px 36px); color: #f4f1ea; padding-block: clamp(72px, 14vw, 140px); }
+.hero h1 { font-family: var(--titulo); font-size: clamp(40px, 8vw, 84px); line-height: 1; margin: 0 0 16px; max-width: 14ch; text-wrap: balance; text-transform: uppercase; }
+.hero p { font-size: clamp(17px, 2.2vw, 20px); max-width: 52ch; margin: 0 0 28px; opacity: .9; }
+.estrellas { display: inline-flex; gap: 8px; align-items: center; font-size: 14px; margin-bottom: 20px; padding: 6px 12px; border-radius: 999px; background: rgb(0 0 0 / .25); color: #fff; }
+.botones { display: flex; flex-wrap: wrap; gap: 12px; }
+.boton { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 999px; font-weight: 600; text-decoration: none; border: 1.5px solid currentColor; }
+.boton.principal { background: var(--acento); color: var(--sobre-acento); border-color: var(--acento); }
+.boton:focus-visible, nav a:focus-visible, .marca:focus-visible { outline: 2px solid var(--acento); outline-offset: 3px; }
+section { padding-block: clamp(56px, 9vw, 96px); }
+h2 { font-family: var(--titulo); font-size: clamp(30px, 5vw, 44px); margin: 0 0 28px; text-transform: uppercase; letter-spacing: .02em; }
+.lista { display: grid; gap: 4px; }
+.item { display: grid; grid-template-columns: 1fr auto; gap: 4px 24px; padding: 16px 0; border-bottom: 1px solid color-mix(in srgb, var(--tinta) 12%, transparent); }
+.item h3 { margin: 0; font-size: 18px; }
+.item .precio { font-weight: 600; color: var(--acento); font-variant-numeric: tabular-nums; }
+.item p { grid-column: 1 / -1; margin: 0; color: var(--suave); font-size: 15px; }
+.galeria { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.galeria img { aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; width: 100%; }
+.alterna { background: var(--superficie); }
+.datos { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 40px; }
+.horario { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.horario td { padding: 8px 0; border-bottom: 1px solid color-mix(in srgb, var(--tinta) 10%, transparent); }
+.horario td:last-child { text-align: right; color: var(--suave); }
+.contacto p { margin: 0 0 8px; }
+footer { padding-block: 32px; font-size: 14px; color: var(--suave); border-top: 1px solid color-mix(in srgb, var(--tinta) 10%, transparent); }
+footer .envoltura { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+.barra { position: fixed; inset: auto 0 0 0; z-index: 6; display: flex; gap: 8px; padding: 10px max(16px, env(safe-area-inset-left)) calc(10px + env(safe-area-inset-bottom)); background: var(--fondo); border-top: 1px solid color-mix(in srgb, var(--tinta) 12%, transparent); }
+.barra .boton { flex: 1; justify-content: center; padding: 11px 12px; }
+@media (min-width: 900px) { .barra { display: none; } body { padding-bottom: 0; } }
+</style>
+</head>
+<body>
+<div class="aviso">Sample website prepared for Northern Blvd Fades. It is not their official site yet.</div>
+<header>
+  <div class="envoltura">
+    <a class="marca" href="#inicio">Northern Blvd Fades</a>
+    <nav>
+      <a href="#lista">Services</a>
+      
+      <a href="#visitanos">Visit us</a>
+    </nav>
+  </div>
+</header>
+<main>
+<div class="hero" id="inicio">
+  <div class="envoltura">
+    <div class="estrellas">★ 4.9 · 187 Google reviews</div>
+    <h1>Sharp cuts. No waiting.</h1>
+    <p>Walk-ins welcome, appointments first. Fades, beard work and hot towel shaves in Jackson Heights. Fictional example to show the template.</p>
+    <div class="botones">
+      <a class="boton principal" href="https://wa.me/17185550142?text=Hi%20Northern%20Blvd%20Fades%2C%20I&#39;d%20like%20to%20make%20a%20booking.">Book now</a>
+      <a class="boton" href="tel:+17185550142">Call</a>
+      <a class="boton" href="https://www.google.com/maps/search/?api=1&amp;query=Northern%20Blvd%20Fades%2C%2000-00%20Northern%20Blvd%2C%20Jackson%20Heights%2C%20NY" target="_blank" rel="noopener">Directions</a>
+    </div>
+  </div>
+</div>
+<section id="lista">
+  <div class="envoltura">
+    <h2>Services</h2>
+    <div class="lista">
+      <div class="item"><h3>Skin fade</h3><span class="precio">$35</span></div>
+      <div class="item"><h3>Haircut + beard</h3><span class="precio">$50</span><p>Line-up, beard shape and hot towel.</p></div>
+      <div class="item"><h3>Hot towel shave</h3><span class="precio">$30</span></div>
+      <div class="item"><h3>Kids cut</h3><span class="precio">$25</span><p>Under 12.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="visitanos" class="alterna">
+  <div class="envoltura datos">
+    <div class="contacto">
+      <h2>Visit us</h2>
+      <p>00-00 Northern Blvd, Jackson Heights, NY</p>
+      <p><a href="tel:+17185550142">+1 718 555 0142</a></p>
+      
+      <p><a href="https://www.google.com/maps/search/?api=1&amp;query=Northern%20Blvd%20Fades%2C%2000-00%20Northern%20Blvd%2C%20Jackson%20Heights%2C%20NY" target="_blank" rel="noopener">Directions →</a></p>
+    </div>
+    <div>
+      <h2>Hours</h2>
+      <table class="horario">
+        <tr><td>Mon – Fri</td><td>10:00 – 20:00</td></tr>
+        <tr><td>Saturday</td><td>9:00 – 19:00</td></tr>
+        <tr><td>Sunday</td><td>Closed</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+</main>
+<footer>
+  <div class="envoltura">
+    <span>© 2026 Northern Blvd Fades</span>
+    <span>Sample website made by Jonathan · <a href="https://jonathaanbl.github.io/1/" target="_blank" rel="noopener">Like it? Message me</a></span>
+  </div>
+</footer>
+<div class="barra">
+  <a class="boton" href="tel:+17185550142">Call</a>
+  <a class="boton principal" href="https://wa.me/17185550142?text=Hi%20Northern%20Blvd%20Fades%2C%20I&#39;d%20like%20to%20make%20a%20booking.">WhatsApp</a>
+</div>
+</body>
+</html>
