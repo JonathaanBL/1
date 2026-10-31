@@ -1,5 +1,6 @@
-# Builds the TikTok link-in-bio page in tiktok/ and publishes it to the gh-pages
-# branch, which GitHub Pages serves at https://jonathaanbl.github.io/1/.
+# Builds the TikTok link-in-bio page in tiktok/ and the sample business sites in
+# webs-muestra/, and publishes both to the gh-pages branch, which GitHub Pages
+# serves at https://jonathaanbl.github.io/1/ (samples under /m/<slug>/).
 name: Deploy TikTok page
 
 on:
@@ -7,6 +8,7 @@ on:
     branches: [claude/link-in-bio]
     paths:
       - "tiktok/**"
+      - "webs-muestra/**"
       - ".github/workflows/deploy-tiktok.yml"
   workflow_dispatch:
 
@@ -36,10 +38,13 @@ jobs:
       - run: npm run lint
       - run: npm run build
 
+      - name: Build sample sites into dist/m
+        run: node ../webs-muestra/generar.mjs && cp -r ../webs-muestra/sitios dist/m
+
       - name: Publish to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./tiktok/dist
           publish_branch: gh-pages
-          commit_message: Publish the TikTok page
+          commit_message: Publish the TikTok page and sample sites

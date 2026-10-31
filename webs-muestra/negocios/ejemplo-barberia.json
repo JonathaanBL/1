@@ -1,0 +1,24 @@
+{
+  "nombre": "Northern Blvd Fades",
+  "tipo": "barberia",
+  "idioma": "en",
+  "ciudad": "Queens, NY",
+  "direccion": "00-00 Northern Blvd, Jackson Heights, NY",
+  "telefono": "+1 718 555 0142",
+  "rating": 4.9,
+  "resenas": 187,
+  "eslogan": "Sharp cuts. No waiting.",
+  "descripcion": "Walk-ins welcome, appointments first. Fades, beard work and hot towel shaves in Jackson Heights. Fictional example to show the template.",
+  "servicios": [
+    { "nombre": "Skin fade", "precio": "$35" },
+    { "nombre": "Haircut + beard", "precio": "$50", "descripcion": "Line-up, beard shape and hot towel." },
+    { "nombre": "Hot towel shave", "precio": "$30" },
+    { "nombre": "Kids cut", "precio": "$25", "descripcion": "Under 12." }
+  ],
+  "horario": [
+    ["Mon – Fri", "10:00 – 20:00"],
+    ["Saturday", "9:00 – 19:00"],
+    ["Sunday", "Closed"]
+  ],
+  "fotos": []
+}

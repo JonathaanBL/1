@@ -1,0 +1,24 @@
+{
+  "nombre": "Brasa del Barrio",
+  "tipo": "restaurante",
+  "idioma": "es",
+  "ciudad": "Santiago",
+  "direccion": "Av. Ejemplo 1234, Providencia, Santiago",
+  "telefono": "+56 9 0000 0000",
+  "rating": 4.7,
+  "resenas": 312,
+  "eslogan": "Fuego lento, mesa larga.",
+  "descripcion": "Parrilla de barrio con cortes a las brasas, empanadas de horno de barro y vinos del valle. Ejemplo ficticio para mostrar la plantilla.",
+  "servicios": [
+    { "nombre": "Lomo vetado a las brasas", "precio": "$14.900", "descripcion": "350 g, con papas rústicas y pebre de la casa." },
+    { "nombre": "Parrillada para dos", "precio": "$29.900", "descripcion": "Asado de tira, longaniza, prieta, pollo y ensalada chilena." },
+    { "nombre": "Empanada de pino", "precio": "$3.200", "descripcion": "Horno de barro, como en el campo." },
+    { "nombre": "Pisco sour de la casa", "precio": "$4.500" }
+  ],
+  "horario": [
+    ["Lunes a jueves", "12:30 – 23:00"],
+    ["Viernes y sábado", "12:30 – 01:00"],
+    ["Domingo", "12:30 – 17:00"]
+  ],
+  "fotos": []
+}
