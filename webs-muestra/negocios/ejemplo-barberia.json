@@ -10,15 +10,59 @@
   "eslogan": "Sharp cuts. No waiting.",
   "descripcion": "Walk-ins welcome, appointments first. Fades, beard work and hot towel shaves in Jackson Heights. Fictional example to show the template.",
   "servicios": [
-    { "nombre": "Skin fade", "precio": "$35" },
-    { "nombre": "Haircut + beard", "precio": "$50", "descripcion": "Line-up, beard shape and hot towel." },
-    { "nombre": "Hot towel shave", "precio": "$30" },
-    { "nombre": "Kids cut", "precio": "$25", "descripcion": "Under 12." }
+    {
+      "nombre": "Skin fade",
+      "precio": "$35",
+      "categoria": "Cuts"
+    },
+    {
+      "nombre": "Haircut + beard",
+      "precio": "$50",
+      "descripcion": "Line-up, beard shape and hot towel.",
+      "categoria": "Cuts"
+    },
+    {
+      "nombre": "Hot towel shave",
+      "precio": "$30",
+      "categoria": "Shaves"
+    },
+    {
+      "nombre": "Kids cut",
+      "precio": "$25",
+      "descripcion": "Under 12.",
+      "categoria": "Cuts"
+    }
   ],
   "horario": [
-    ["Mon – Fri", "10:00 – 20:00"],
-    ["Saturday", "9:00 – 19:00"],
-    ["Sunday", "Closed"]
+    [
+      "Mon – Fri",
+      "10:00 – 20:00"
+    ],
+    [
+      "Saturday",
+      "9:00 – 19:00"
+    ],
+    [
+      "Sunday",
+      "Closed"
+    ]
   ],
-  "fotos": []
+  "fotos": [],
+  "testimonios": [
+    {
+      "autor": "Marcus T.",
+      "texto": "Cleanest fade in Jackson Heights. In and out in 30 minutes.",
+      "estrellas": 5
+    },
+    {
+      "autor": "Luis P.",
+      "texto": "Booked online, no waiting. The hot towel shave is worth it.",
+      "estrellas": 5
+    },
+    {
+      "autor": "Andre K.",
+      "texto": "Great with kids, my son actually sits still here.",
+      "estrellas": 5
+    }
+  ]
 }

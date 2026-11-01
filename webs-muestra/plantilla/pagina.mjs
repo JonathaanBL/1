@@ -6,6 +6,36 @@ const esc = (s = "") =>
 
 const soloDigitos = (s = "") => String(s).replace(/\D/g, "");
 
+// Headline split into words that fade in one after another
+// (from 21st "Text Reveal" by cnippet-dev).
+const palabras = (texto) =>
+  texto.split(/\s+/).filter(Boolean)
+    .map((p, i) => `<span class="palabra" style="--i:${i}">${esc(p)}</span>`).join(" ");
+
+// Groups services by their optional `categoria`, keeping file order.
+const porCategoria = (lista) => {
+  const grupos = new Map();
+  for (const s of lista) {
+    const c = s.categoria ?? "";
+    if (!grupos.has(c)) grupos.set(c, []);
+    grupos.get(c).push(s);
+  }
+  return [...grupos];
+};
+
+// One dish or service with a dotted leader to its price
+// (from 21st "Restaurant Menu Block" by olewandowski1).
+const item = (s) => `<li>
+          <div class="linea"><span class="nombre">${esc(s.nombre)}</span><span class="puntos" aria-hidden="true"></span><span class="precio">${esc(s.precio ?? "")}</span></div>
+          ${s.descripcion ? `<p>${esc(s.descripcion)}</p>` : ""}
+        </li>`;
+
+const tarjetaResena = (r) => `<figure class="resena">
+        <div class="estrellas-resena" aria-label="${Number(r.estrellas ?? 5)} / 5">${"★".repeat(Math.round(Number(r.estrellas ?? 5)))}</div>
+        <blockquote>${esc(r.texto)}</blockquote>
+        <figcaption>${esc(r.autor)}</figcaption>
+      </figure>`;
+
 // Builds the whole page for one business. `n` is the business file, `autor`
 // the seller's details from config.json.
 export function pagina(n, autor) {
@@ -14,6 +44,7 @@ export function pagina(n, autor) {
   const lista = n.servicios ?? [];
   const tituloLista = temaPara(n.tipo) === "restaurante" ? tx.menu : tx.servicios;
   const fotos = n.fotos ?? [];
+  const resenas = (n.testimonios ?? []).filter((r) => r.texto);
   const tel = soloDigitos(n.telefono);
   const wa = soloDigitos(n.whatsapp || n.telefono);
   const waLink = wa ? `https://wa.me/${wa}?text=${encodeURIComponent(tx.hola(n.nombre))}` : "";
@@ -74,11 +105,36 @@ nav a:hover { color: var(--tinta); }
 .boton:focus-visible, nav a:focus-visible, .marca:focus-visible { outline: 2px solid var(--acento); outline-offset: 3px; }
 section { padding-block: clamp(56px, 9vw, 96px); }
 h2 { font-family: var(--titulo); font-size: clamp(30px, 5vw, 44px); margin: 0 0 28px; ${t.mayusculas ? "text-transform: uppercase; letter-spacing: .02em;" : ""} }
-.lista { display: grid; gap: 4px; }
-.item { display: grid; grid-template-columns: 1fr auto; gap: 4px 24px; padding: 16px 0; border-bottom: 1px solid color-mix(in srgb, var(--tinta) 12%, transparent); }
-.item h3 { margin: 0; font-size: 18px; }
-.item .precio { font-weight: 600; color: var(--acento); font-variant-numeric: tabular-nums; }
-.item p { grid-column: 1 / -1; margin: 0; color: var(--suave); font-size: 15px; }
+.palabra { display: inline-block; animation: revelar .7s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--i) * 90ms + 150ms); }
+@keyframes revelar { from { opacity: 0; filter: blur(12px); transform: translateY(.25em); } }
+.boton.brillo { position: relative; overflow: hidden; isolation: isolate; }
+.boton.brillo::before { content: ""; position: absolute; z-index: -1; top: 50%; left: 50%; width: 300%; aspect-ratio: 1; translate: -50% -50%;
+  background: conic-gradient(from 225deg, transparent 0, rgb(255 255 255 / .75) 90deg, transparent 90deg); animation: girar 3s linear infinite; }
+.boton.brillo::after { content: ""; position: absolute; z-index: -1; inset: 2px; border-radius: inherit; background: var(--acento); box-shadow: inset 0 -8px 10px rgb(255 255 255 / .12); }
+@keyframes girar { to { rotate: 360deg; } }
+.menu { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 40px 56px; }
+.menu h3 { margin: 0 0 4px; font-size: 13px; letter-spacing: .18em; text-transform: uppercase; color: var(--acento); }
+.menu ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
+.linea { display: flex; align-items: baseline; gap: 8px; font-weight: 600; font-size: 17px; }
+.puntos { flex: 1; min-width: 16px; border-bottom: 2px dotted color-mix(in srgb, var(--tinta) 30%, transparent); translate: 0 -.25em; }
+.linea .precio { color: var(--acento); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.menu p { margin: 4px 0 0; color: var(--suave); font-size: 15px; }
+.cinta { overflow: hidden; mask: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.pista { display: flex; gap: 16px; width: max-content; animation: deslizar 40s linear infinite; }
+.cinta:hover .pista, .cinta:focus-within .pista { animation-play-state: paused; }
+.copia { display: contents; }
+@keyframes deslizar { to { translate: calc(-50% - 8px) 0; } }
+.resena { margin: 0; width: min(340px, 80vw); padding: 22px; border-radius: 16px; background: var(--superficie); border: 1px solid color-mix(in srgb, var(--tinta) 10%, transparent); display: flex; flex-direction: column; gap: 10px; }
+.alterna .resena { background: var(--fondo); }
+.resena blockquote { margin: 0; font-size: 16px; }
+.resena figcaption { color: var(--suave); font-size: 14px; font-weight: 600; }
+.estrellas-resena { color: var(--acento); letter-spacing: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .palabra, .boton.brillo::before { animation: none; }
+  .pista { animation: none; flex-wrap: wrap; width: auto; }
+  .pista .copia { display: none; }
+  .cinta { mask: none; }
+}
 .galeria { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
 .galeria img { aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; width: 100%; }
 .alterna { background: var(--superficie); }
@@ -110,10 +166,10 @@ footer .envoltura { display: flex; flex-wrap: wrap; justify-content: space-betwe
 <div class="hero" id="inicio">
   <div class="envoltura">
     ${n.rating ? `<div class="estrellas">★ ${esc(n.rating)}${n.resenas ? ` · ${esc(tx.resenas(n.resenas))}` : ""}</div>` : ""}
-    <h1>${esc(n.eslogan || n.nombre)}</h1>
+    <h1>${palabras(n.eslogan || n.nombre)}</h1>
     ${n.descripcion ? `<p>${esc(n.descripcion)}</p>` : ""}
     <div class="botones">
-      ${reservar ? `<a class="boton principal" href="${esc(reservar)}">${tx.reservar}</a>` : ""}
+      ${reservar ? `<a class="boton principal brillo" href="${esc(reservar)}">${tx.reservar}</a>` : ""}
       ${tel ? `<a class="boton" href="tel:+${tel}">${tx.llamar}</a>` : ""}
       ${mapa ? `<a class="boton" href="${esc(mapa)}" target="_blank" rel="noopener">${tx.comoLlegar}</a>` : ""}
     </div>
@@ -122,8 +178,26 @@ footer .envoltura { display: flex; flex-wrap: wrap; justify-content: space-betwe
 ${lista.length ? `<section id="lista">
   <div class="envoltura">
     <h2>${tituloLista}</h2>
-    <div class="lista">
-      ${lista.map((s) => `<div class="item"><h3>${esc(s.nombre)}</h3><span class="precio">${esc(s.precio ?? "")}</span>${s.descripcion ? `<p>${esc(s.descripcion)}</p>` : ""}</div>`).join("\n      ")}
+    <div class="menu">
+      ${porCategoria(lista).map(([cat, items]) => `<div>
+        ${cat ? `<h3>${esc(cat)}</h3>` : ""}
+        <ul>
+        ${items.map(item).join("\n        ")}
+        </ul>
+      </div>`).join("\n      ")}
+    </div>
+  </div>
+</section>` : ""}
+${resenas.length ? `<section id="resenas" class="alterna">
+  <div class="envoltura">
+    <h2>${tx.opiniones}</h2>
+  </div>
+  <div class="cinta">
+    <div class="pista">
+      ${resenas.map(tarjetaResena).join("\n      ")}
+      <div class="copia" aria-hidden="true">
+      ${resenas.map(tarjetaResena).join("\n      ")}
+      </div>
     </div>
   </div>
 </section>` : ""}
