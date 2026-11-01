@@ -1,6 +1,7 @@
 import { TEMAS, temaPara } from "./temas.mjs";
 import { TEXTOS } from "./textos.mjs";
 import { cssEfectos, scriptEfectos } from "./efectos.mjs";
+import { cssObjeto, objeto3d } from "./objeto3d.mjs";
 
 const esc = (s = "") =>
   String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -159,6 +160,7 @@ footer .envoltura { display: flex; flex-wrap: wrap; justify-content: space-betwe
 .barra .boton { flex: 1; justify-content: center; padding: 11px 12px; }
 @media (min-width: 900px) { .barra { display: none; } body { padding-bottom: 0; } }
 ${cssEfectos}
+${cssObjeto}
 </style>
 </head>
 <body>
@@ -182,6 +184,7 @@ ${cssEfectos}
       <text><textPath href="#circulo" textLength="236">${esc(textoSello)}</textPath></text></svg>
     <span class="centro">${n.rating ? "★" : esc(n.nombre.charAt(0))}</span>
   </div>
+  ${objeto3d(temaPara(n.tipo))}
   <div class="envoltura">
     ${n.rating ? `<div class="estrellas">★ ${esc(n.rating)}${n.resenas ? ` · ${esc(tx.resenas(n.resenas))}` : ""}</div>` : ""}
     <h1>${palabras(n.eslogan || n.nombre)}</h1>

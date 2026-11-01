@@ -1,7 +1,9 @@
 // Motion layer for the sample sites: a WebGL liquid background in the hero,
 // a spinning review stamp, a big scrolling text band, reveal-on-scroll and a
-// 3D tilt on review cards. Everything degrades to the static page when WebGL
+// 3D tilt on review cards (the spinning object and cursor live in objeto3d.mjs). Everything degrades to the static page when WebGL
 // or JavaScript is missing, and stays still under prefers-reduced-motion.
+
+import { scriptObjeto } from "./objeto3d.mjs";
 
 const rgb = (hex) => {
   const h = hex.replace("#", "");
@@ -58,6 +60,7 @@ document.documentElement.classList.add("js");
     });
   }
 
+${scriptObjeto}
   const lienzo = document.querySelector(".lienzo");
   const gl = lienzo && lienzo.getContext("webgl", { antialias: false, premultipliedAlpha: false });
   if (!gl) { lienzo && lienzo.remove(); return; }
