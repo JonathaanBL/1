@@ -1,5 +1,6 @@
 import { TEMAS, temaPara } from "./temas.mjs";
 import { TEXTOS } from "./textos.mjs";
+import { cssEfectos, scriptEfectos } from "./efectos.mjs";
 
 const esc = (s = "") =>
   String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -61,6 +62,15 @@ export function pagina(n, autor) {
     ? `linear-gradient(180deg, rgb(0 0 0 / .25), rgb(0 0 0 / .65)), url("${esc(fotos[0])}") center / cover`
     : t.degradado;
   const heroTinta = fotos[0] ? "#ffffff" : t.tinta;
+
+  // Words for the big scrolling band: the business's own `cinta`, or its
+  // name and first services.
+  const banda = n.cinta?.length ? n.cinta : [n.nombre, ...lista.slice(0, 4).map((s) => s.nombre)];
+  const sello = n.rating
+    ? `★ ${n.rating} · ${tx.resenas(n.resenas ?? "")} · ${n.ciudad ?? ""} · `
+    : `${n.nombre} · ${n.ciudad ?? ""} · `;
+  // Short stamp text is padded with stars so the letters keep an even spacing.
+  const textoSello = sello.length < 36 ? sello + "✦ · ".repeat(Math.ceil((36 - sello.length) / 4)) : sello;
 
   return `<!doctype html>
 <html lang="${n.idioma === "en" ? "en" : "es"}">
@@ -148,6 +158,7 @@ footer .envoltura { display: flex; flex-wrap: wrap; justify-content: space-betwe
 .barra { position: fixed; inset: auto 0 0 0; z-index: 6; display: flex; gap: 8px; padding: 10px max(16px, env(safe-area-inset-left)) calc(10px + env(safe-area-inset-bottom)); background: var(--fondo); border-top: 1px solid color-mix(in srgb, var(--tinta) 12%, transparent); }
 .barra .boton { flex: 1; justify-content: center; padding: 11px 12px; }
 @media (min-width: 900px) { .barra { display: none; } body { padding-bottom: 0; } }
+${cssEfectos}
 </style>
 </head>
 <body>
@@ -164,6 +175,13 @@ footer .envoltura { display: flex; flex-wrap: wrap; justify-content: space-betwe
 </header>
 <main>
 <div class="hero" id="inicio">
+  ${fotos[0] ? "" : '<canvas class="lienzo" aria-hidden="true"></canvas>'}
+  <div class="grano" aria-hidden="true"></div>
+  <div class="sello" aria-hidden="true" style="color: ${heroTinta}">
+    <svg viewBox="0 0 100 100"><defs><path id="circulo" d="M50 50m-38 0a38 38 0 1 1 76 0a38 38 0 1 1-76 0"/></defs>
+      <text><textPath href="#circulo" textLength="236">${esc(textoSello)}</textPath></text></svg>
+    <span class="centro">${n.rating ? "★" : esc(n.nombre.charAt(0))}</span>
+  </div>
   <div class="envoltura">
     ${n.rating ? `<div class="estrellas">★ ${esc(n.rating)}${n.resenas ? ` · ${esc(tx.resenas(n.resenas))}` : ""}</div>` : ""}
     <h1>${palabras(n.eslogan || n.nombre)}</h1>
@@ -175,10 +193,13 @@ footer .envoltura { display: flex; flex-wrap: wrap; justify-content: space-betwe
     </div>
   </div>
 </div>
+${banda.length ? `<div class="banda" aria-hidden="true"><div class="banda-pista">
+  ${[...banda, ...banda].map((b, i) => `<span class="${i % 2 ? "hueco" : ""}">${esc(b)}</span>`).join("")}
+</div></div>` : ""}
 ${lista.length ? `<section id="lista">
   <div class="envoltura">
-    <h2>${tituloLista}</h2>
-    <div class="menu">
+    <h2 class="revela">${tituloLista}</h2>
+    <div class="menu revela">
       ${porCategoria(lista).map(([cat, items]) => `<div>
         ${cat ? `<h3>${esc(cat)}</h3>` : ""}
         <ul>
@@ -190,9 +211,9 @@ ${lista.length ? `<section id="lista">
 </section>` : ""}
 ${resenas.length ? `<section id="resenas" class="alterna">
   <div class="envoltura">
-    <h2>${tx.opiniones}</h2>
+    <h2 class="revela">${tx.opiniones}</h2>
   </div>
-  <div class="cinta">
+  <div class="cinta revela">
     <div class="pista">
       ${resenas.map(tarjetaResena).join("\n      ")}
       <div class="copia" aria-hidden="true">
@@ -210,7 +231,7 @@ ${fotos.length > 1 ? `<section id="galeria" class="alterna">
   </div>
 </section>` : ""}
 <section id="visitanos" class="${fotos.length > 1 ? "" : "alterna"}">
-  <div class="envoltura datos">
+  <div class="envoltura datos revela">
     <div class="contacto">
       <h2>${tx.visitanos}</h2>
       ${n.direccion ? `<p>${esc(n.direccion)}</p>` : ""}
@@ -237,6 +258,7 @@ ${fotos.length > 1 ? `<section id="galeria" class="alterna">
   ${tel ? `<a class="boton" href="tel:+${tel}">${tx.llamar}</a>` : ""}
   ${waLink ? `<a class="boton principal" href="${esc(waLink)}">${tx.whatsapp}</a>` : reservar ? `<a class="boton principal" href="${esc(reservar)}">${tx.reservar}</a>` : ""}
 </div>
+${scriptEfectos(t)}
 </body>
 </html>
 `;
