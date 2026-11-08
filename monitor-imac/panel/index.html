@@ -107,9 +107,13 @@ body.caliente .reactor { animation: alerta 1s ease-in-out infinite; }
       <div class="ventiladores" id="otras"></div>
     </div>
     <div class="tarjeta">
-      <h2>Carga del procesador</h2>
+      <h2>Uso del procesador</h2>
       <div class="fila"><span class="grande" id="carga">--</span><span class="etiqueta" id="nucleos"></span></div>
       <div class="barra"><i id="cargaBarra"></i></div>
+    </div>
+    <div class="tarjeta">
+      <h2>Lo que más consume</h2>
+      <div class="ventiladores" id="procesos"><div>Sin datos</div></div>
     </div>
     <div class="tarjeta">
       <h2>Encendido hace</h2>
@@ -208,10 +212,15 @@ async function actualizar() {
       const otras = Object.entries(a.otras || {});
       $("otrasTarjeta").hidden = !otras.length;
       $("otras").innerHTML = otras.map(([n, t]) => `<div><span>${n}</span><span>${t.toFixed(0)} °C</span></div>`).join("");
-      $("carga").textContent = a.carga + " %";
-      $("nucleos").textContent = a.nucleos + " núcleos";
-      $("cargaBarra").style.width = Math.min(100, a.carga) + "%";
-      $("cargaBarra").style.setProperty("--c", a.carga > 90 ? COLOR[2] : a.carga > 60 ? COLOR[1] : COLOR[0]);
+      const uso = a.uso;
+      $("carga").textContent = uso == null ? "--" : uso + " %";
+      $("nucleos").textContent = `${a.nucleos} núcleos · cola ${a.cargaPromedio ?? "--"}`;
+      $("cargaBarra").style.width = (uso == null ? 0 : Math.min(100, uso)) + "%";
+      $("cargaBarra").style.setProperty("--c", uso > 90 ? COLOR[2] : uso > 60 ? COLOR[1] : COLOR[0]);
+      const ps = a.procesos || [];
+      $("procesos").innerHTML = ps.length
+        ? ps.map((p) => `<div><span>${p.nombre.replace(/[&<>]/g, "")}</span><span>${p.cpu.toFixed(1)} %</span></div>`).join("")
+        : "<div>Sin datos</div>";
       $("encendido").textContent = duracion(a.encendidoDesde);
     }
     pintarTraza(datos.historial || []);

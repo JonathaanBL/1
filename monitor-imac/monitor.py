@@ -148,12 +148,47 @@ def leer_demo(t):
         "otras": {"Disco": round(40 + random.uniform(-.5, .5), 1), "Ambiente": 27.5},
         "nivelTermico": {"CPU": 1 if cpu > 80 else 0},
         "encendidoDesde": time.time() - 3 * 3600 - 1260,
+        "uso": round(35 + 20 * math.sin(t / 23)),
+        "procesos": [{"pid": 151, "nombre": "WindowServer", "cpu": 14.2}, {"pid": 402, "nombre": "mds_stores", "cpu": 9.8},
+                     {"pid": 88, "nombre": "Google Chrome Helper", "cpu": 6.1}, {"pid": 0, "nombre": "kernel_task", "cpu": 3.4}],
     }
+
+
+USO = re.compile(r"CPU usage:\s*([\d.]+)% user,\s*([\d.]+)% sys,\s*([\d.]+)% idle")
+PROCESO = re.compile(r"^\s*(\d+)\s+(.+?)\s+([\d.]+)\s*$")
+
+
+def interpretar_top(texto, nucleos):
+    """Real CPU use and the busiest processes from the last sample of
+    `top -l 2 ...`. The first sample is skipped: its percentages are averaged
+    since boot. Process %CPU is per core, so it is divided by the core count
+    to show each process's share of the whole machine."""
+    muestra = texto.split("Processes:")[-1]
+    m = USO.search(muestra)
+    uso = round(float(m.group(1)) + float(m.group(2))) if m else None
+    procesos = []
+    tabla = muestra.split("%CPU", 1)[-1] if "%CPU" in muestra else ""
+    for linea in tabla.splitlines():
+        p = PROCESO.match(linea)
+        if p and float(p.group(3)) > 0:
+            procesos.append({"pid": int(p.group(1)), "nombre": p.group(2).strip(),
+                             "cpu": round(float(p.group(3)) / nucleos, 1)})
+    return uso, procesos[:6]
+
+
+def uso_cpu(nucleos):
+    try:
+        r = subprocess.run(["top", "-l", "2", "-s", "1", "-n", "8", "-o", "cpu", "-stats", "pid,command,cpu"],
+                           capture_output=True, text=True, timeout=15)
+        return interpretar_top(r.stdout, nucleos)
+    except (OSError, subprocess.TimeoutExpired):
+        return None, []
 
 
 def sistema():
     carga = os.getloadavg()
     nucleos = os.cpu_count() or 1
+    uso, procesos = uso_cpu(nucleos)
     arranque = None
     try:
         crudo = subprocess.run(["sysctl", "-n", "kern.boottime"], capture_output=True, text=True).stdout
@@ -161,8 +196,8 @@ def sistema():
         arranque = int(m.group(1)) if m else None
     except OSError:
         pass
-    return {"carga": round(carga[0] / nucleos * 100), "nucleos": nucleos,
-            "encendidoDesde": arranque}
+    return {"uso": uso, "procesos": procesos, "cargaPromedio": round(carga[0], 2),
+            "nucleos": nucleos, "encendidoDesde": arranque}
 
 
 def muestrear(demo):
@@ -175,8 +210,9 @@ def muestrear(demo):
             else:
                 lectura = leer_sensores()
             datos_sistema = sistema()
-            if lectura.get("encendidoDesde"):
-                datos_sistema.pop("encendidoDesde")
+            for clave in ("encendidoDesde", "uso", "procesos"):
+                if lectura.get(clave) is not None:
+                    datos_sistema.pop(clave)
             lectura.update(datos_sistema, hora=time.time())
             with candado:
                 estado["actual"] = lectura
