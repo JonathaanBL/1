@@ -8,14 +8,14 @@ Los datos vienen de `powermetrics`, la herramienta de Apple que ya trae macOS. N
 
 1. Descarga esta carpeta en el iMac. En GitHub: **Code → Download ZIP**, y descomprímelo.
 2. Haz doble clic en **`iniciar.command`**.
-   - Si macOS lo bloquea: clic derecho → **Abrir** → **Abrir**.
+   - Si macOS dice que no pudo verificar que esté libre de malware (es el aviso normal para cualquier archivo descargado sin firma de Apple): pulsa **Aceptar**, ve a **Ajustes del Sistema → Privacidad y seguridad**, baja hasta el final y pulsa **Abrir igualmente**. Solo la primera vez. O usa la forma desde Terminal de más abajo, que no muestra ese aviso.
    - Si dice que no tiene permiso, abre Terminal en esta carpeta y ejecuta `chmod +x iniciar.command`.
 3. Escribe la contraseña de tu Mac cuando la pida en la ventana de Terminal. No se ve mientras la escribes; es normal.
 4. Se abre el panel en `http://localhost:8787`. Deja la ventana de Terminal abierta: si la cierras, el monitor se detiene.
 
 La primera vez, si macOS dice que necesita las "herramientas de línea de comandos" para `python3`, acepta la instalación (unos minutos) y vuelve a abrir `iniciar.command`.
 
-Sin el doble clic, desde Terminal en esta carpeta:
+Sin el doble clic, desde Terminal: escribe `cd ` (con espacio), arrastra la carpeta `monitor-imac` a la ventana, pulsa Enter y luego:
 
 ```bash
 sudo python3 monitor.py
