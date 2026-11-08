@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
-"""Temperature monitor for an Intel iMac: reads the SMC sensors through Apple's
-powermetrics and serves a live dashboard at http://localhost:8787.
+"""Temperature monitor for an Intel iMac: reads the SMC sensors and serves a
+live dashboard at http://localhost:8787.
 
-    sudo python3 monitor.py           # real sensors (powermetrics needs root)
+Sensors come from sensores/smc.c, compiled on first run with the Command Line
+Tools' clang, which reads the SMC directly and works on older Macs patched with
+OCLP. If that is unavailable it falls back to Apple's powermetrics (needs root).
+
+    sudo python3 monitor.py           # real sensors
     python3 monitor.py --demo         # simulated readings, to try the panel
 
 Works with the Python 3.9 that ships with Apple's Command Line Tools.
@@ -27,6 +31,14 @@ HISTORIAL = 900  # 30 minutes at one reading every 2 seconds
 
 TEMPERATURA = re.compile(r"^(.+?) (?:die )?temperature:\s*([\d.]+)\s*C", re.I | re.M)
 VENTILADOR = re.compile(r"^(Fan[^:]*):\s*([\d.]+)\s*rpm", re.I | re.M)
+LECTOR_C = CARPETA / "sensores" / "smc.c"
+LECTOR = CARPETA / "sensores" / "smc-lector"
+
+# SMC keys by preference: die first, then proximity, then heatsink.
+CLAVES_CPU = ("TC0D", "TC0E", "TC0F", "TC0P", "TC0H")
+CLAVES_GPU = ("TG0D", "TG0P", "TG0H")
+NOMBRES = {"TH0P": "Disco", "TH1P": "Disco 2", "Tm0P": "Memoria", "TA0P": "Ambiente",
+           "TL0P": "Pantalla", "TW0P": "Wi-Fi", "TO0P": "Lector óptico"}
 NIVEL = re.compile(r"^(CPU|GPU|IO) Thermal level:\s*(\d+)", re.I | re.M)
 
 estado = {"actual": None, "historial": deque(maxlen=HISTORIAL), "error": None, "demo": False}
@@ -48,7 +60,53 @@ def interpretar(texto):
     }
 
 
-def leer_sensores():
+def preparar_lector():
+    """Compiles the SMC reader once. Returns an error message, or None."""
+    if LECTOR.exists() and LECTOR.stat().st_mtime >= LECTOR_C.stat().st_mtime:
+        return None
+    try:
+        r = subprocess.run(["clang", "-O2", "-framework", "IOKit", "-o", str(LECTOR), str(LECTOR_C)],
+                           capture_output=True, text=True, timeout=120)
+    except OSError:
+        return "falta clang (instala las herramientas de línea de comandos: xcode-select --install)"
+    return None if r.returncode == 0 else "no se pudo compilar el lector SMC: " + r.stderr.strip()[-300:]
+
+
+def interpretar_smc(texto):
+    """Turns the reader's "KEY value" lines into a reading."""
+    v = {}
+    for linea in texto.splitlines():
+        partes = linea.split()
+        if len(partes) == 2:
+            try:
+                v[partes[0]] = float(partes[1])
+            except ValueError:
+                pass
+    primera = lambda claves: next((v[c] for c in claves if c in v), None)
+    return {
+        "cpu": primera(CLAVES_CPU),
+        "gpu": primera(CLAVES_GPU),
+        "otras": {NOMBRES[c]: v[c] for c in NOMBRES if c in v},
+        "ventiladores": [v[f"F{i}Ac"] for i in range(int(v.get("FNum", 0))) if f"F{i}Ac" in v],
+        "nivelTermico": {},
+        "fuente": "SMC",
+    }
+
+
+def leer_smc():
+    salida = subprocess.run([str(LECTOR)], capture_output=True, text=True, timeout=10)
+    if salida.returncode != 0:
+        raise RuntimeError(salida.stderr.strip() or "el lector SMC falló")
+    lectura = interpretar_smc(salida.stdout)
+    if lectura["cpu"] is None and not lectura["ventiladores"]:
+        raise RuntimeError("el SMC no devolvió sensores")
+    time.sleep(INTERVALO_MS / 1000)
+    return lectura
+
+
+def leer_powermetrics():
+    if os.geteuid() != 0:
+        raise RuntimeError("powermetrics necesita permisos de administrador: ejecuta  sudo python3 monitor.py")
     salida = subprocess.run(
         ["powermetrics", "--samplers", "smc", "-i", str(INTERVALO_MS), "-n", "1"],
         capture_output=True, text=True, timeout=30,
@@ -58,7 +116,25 @@ def leer_sensores():
     lectura = interpretar(salida.stdout)
     if lectura["cpu"] is None and not lectura["ventiladores"]:
         raise RuntimeError("powermetrics no devolvió sensores en este Mac")
+    lectura["fuente"] = "powermetrics"
     return lectura
+
+
+def leer_sensores():
+    errores = []
+    falla = preparar_lector()
+    if falla is None:
+        try:
+            return leer_smc()
+        except Exception as e:
+            errores.append(str(e))
+    else:
+        errores.append(falla)
+    try:
+        return leer_powermetrics()
+    except Exception as e:
+        errores.append(str(e))
+    raise RuntimeError(" · ".join(errores))
 
 
 def leer_demo(t):
@@ -67,8 +143,9 @@ def leer_demo(t):
     cpu = 52 + 9 * math.sin(t / 37) + pico + random.uniform(-1, 1)
     gpu = 61 + 6 * math.sin(t / 53 + 1) + pico * 0.6 + random.uniform(-0.8, 0.8)
     return {
-        "cpu": round(cpu, 1), "gpu": round(gpu, 1), "otras": {},
+        "cpu": round(cpu, 1), "gpu": round(gpu, 1),
         "ventiladores": [round(1100 + (cpu - 45) * 38), 1100, round(1000 + (gpu - 50) * 30)],
+        "otras": {"Disco": round(40 + random.uniform(-.5, .5), 1), "Ambiente": 27.5},
         "nivelTermico": {"CPU": 1 if cpu > 80 else 0},
         "encendidoDesde": time.time() - 3 * 3600 - 1260,
     }
@@ -139,8 +216,6 @@ def main():
     p.add_argument("--demo", action="store_true", help="datos simulados, sin sensores")
     p.add_argument("--puerto", type=int, default=PUERTO)
     args = p.parse_args()
-    if not args.demo and os.geteuid() != 0:
-        raise SystemExit("powermetrics necesita permisos de administrador: ejecuta  sudo python3 monitor.py")
     estado["demo"] = args.demo
     threading.Thread(target=muestrear, args=(args.demo,), daemon=True).start()
     # Only this Mac can open the panel.

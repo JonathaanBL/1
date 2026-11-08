@@ -102,6 +102,10 @@ body.caliente .reactor { animation: alerta 1s ease-in-out infinite; }
       <h2>Ventiladores</h2>
       <div class="ventiladores" id="ventiladores"><div>Sin datos</div></div>
     </div>
+    <div class="tarjeta" id="otrasTarjeta" hidden>
+      <h2>Otros sensores</h2>
+      <div class="ventiladores" id="otras"></div>
+    </div>
     <div class="tarjeta">
       <h2>Carga del procesador</h2>
       <div class="fila"><span class="grande" id="carga">--</span><span class="etiqueta" id="nucleos"></span></div>
@@ -191,7 +195,7 @@ async function actualizar() {
     const r = await fetch("/api/datos", { cache: "no-store" });
     const datos = await r.json();
     const a = datos.actual;
-    $("conexion").textContent = datos.error ? "Error: " + datos.error : datos.demo ? "Modo prueba (datos simulados)" : "En vivo";
+    $("conexion").textContent = datos.error ? "Error: " + datos.error : datos.demo ? "Modo prueba (datos simulados)" : "En vivo" + (a && a.fuente ? " · " + a.fuente : "");
     if (a) {
       pintarCpu(a.cpu);
       const ng = nivel(a.gpu, UMBRAL.gpu);
@@ -201,6 +205,9 @@ async function actualizar() {
       $("gpuBarra").style.setProperty("--c", COLOR[ng]);
       const v = a.ventiladores || [];
       $("ventiladores").innerHTML = v.length ? v.map((rpm, i) => `<div><span>${v.length > 1 ? "Ventilador " + (i + 1) : "Ventilador"}</span><span>${Math.round(rpm)} rpm</span></div>`).join("") : "<div>Sin datos</div>";
+      const otras = Object.entries(a.otras || {});
+      $("otrasTarjeta").hidden = !otras.length;
+      $("otras").innerHTML = otras.map(([n, t]) => `<div><span>${n}</span><span>${t.toFixed(0)} °C</span></div>`).join("");
       $("carga").textContent = a.carga + " %";
       $("nucleos").textContent = a.nucleos + " núcleos";
       $("cargaBarra").style.width = Math.min(100, a.carga) + "%";

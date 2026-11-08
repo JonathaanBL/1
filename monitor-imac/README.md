@@ -2,7 +2,7 @@
 
 Panel estilo JARVIS que muestra en vivo la temperatura del procesador y de la gráfica, la velocidad de los ventiladores, la carga y cuánto tiempo lleva encendido, con un gráfico de los últimos 30 minutos. Pensado para el iMac 2011 con Sequoia (OCLP), que va a estar encendido todo el día.
 
-Los datos vienen de `powermetrics`, la herramienta de Apple que ya trae macOS. No hace falta instalar nada más. El panel solo se puede abrir desde el propio iMac (`localhost`).
+Los datos se leen directamente del chip de sensores del Mac (SMC), con un pequeño lector en `sensores/smc.c` que se compila solo la primera vez con las herramientas de línea de comandos de Apple. Esto funciona en Macs antiguos con OCLP, donde la herramienta de Apple `powermetrics` no ve los sensores. Si el lector no puede usarse, prueba con `powermetrics`. El panel solo se puede abrir desde el propio iMac (`localhost`).
 
 ## Abrirlo
 
@@ -40,4 +40,5 @@ Un iMac de 2011 tranquilo suele estar entre 40 y 60 °C. Si pasa mucho tiempo en
 El panel dice arriba qué pasa:
 
 - **"powermetrics necesita permisos de administrador"**: ábrelo con `sudo` o con `iniciar.command`.
-- **"powermetrics no devolvió sensores en este Mac"**: con OCLP, algunos modelos no exponen todos los sensores. Pásame lo que muestra `sudo powermetrics --samplers smc -n 1` y lo adapto.
+- **"falta clang"**: instala las herramientas de línea de comandos con `xcode-select --install` en Terminal y vuelve a abrir el monitor.
+- **"el SMC no devolvió sensores"**: pásame lo que muestra `sensores/smc-lector` al ejecutarlo en Terminal desde esta carpeta, y lo adapto a tu modelo.
