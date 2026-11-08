@@ -237,11 +237,15 @@ class Manejador(SimpleHTTPRequestHandler):
                 }).encode()
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
-            self.send_header("Cache-Control", "no-store")
             self.end_headers()
             self.wfile.write(cuerpo)
         else:
             super().do_GET()
+
+    def end_headers(self):
+        # Never cache the panel, so a new version shows up on a normal reload.
+        self.send_header("Cache-Control", "no-store")
+        super().end_headers()
 
     def log_message(self, *args):
         pass
